@@ -1,5 +1,13 @@
 const properties = require('./json/properties.json');
 const users = require('./json/users.json');
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  user: 'vagrant',
+  password: '123',
+  host: 'localhost',
+  database: 'lightbnb'
+});
 
 /// Users
 
@@ -8,7 +16,7 @@ const users = require('./json/users.json');
  * @param {String} email The email of the user.
  * @return {Promise<{}>} A promise to the user.
  */
- const getUserWithEmail = function(email) {
+const getUserWithEmail = function(email) {
   return pool
     .query(`SELECT * FROM users
       WHERE email = $1`,[email])
@@ -39,6 +47,7 @@ const getUserWithId = function(id) {
 };
 exports.getUserWithId = getUserWithId;
 
+
 /**
  * Add a new user to the database.
  * @param {{name: string, password: string, email: string}} user
@@ -66,7 +75,7 @@ exports.addUser = addUser;
  * @param {string} guest_id The id of the user.
  * @return {Promise<[{}]>} A promise to the reservations.
  */
- const getAllReservations = function(guest_id, limit = 10) {
+const getAllReservations = function(guest_id, limit = 10) {
   return pool
     .query(`SELECT * FROM reservations
     JOIN properties ON properties.id = property_id
@@ -81,7 +90,7 @@ exports.addUser = addUser;
 };
 exports.getAllReservations = getAllReservations;
 
-//Properties
+/// Properties
 
 /**
  * Get all properties.
@@ -89,7 +98,7 @@ exports.getAllReservations = getAllReservations;
  * @param {*} limit The number of results to return.
  * @return {Promise<[{}]>}  A promise to the properties.
  */
- const getAllProperties = function(options, limit = 10) {
+const getAllProperties = function(options, limit = 10) {
   return pool
     .query(`SELECT * FROM properties
       LIMIT $1`,[limit])
